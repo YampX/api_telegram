@@ -1,40 +1,58 @@
-const express = require('express')
-const axios = require('axios')
-const bodyParser = require('body-parser')
+const express = require("express");
+const axios = require("axios");
+const bodyParser = require("body-parser");
+const Groq = require("groq-sdk");
+const { GROQ_API_KEY, TOKEN, SERVER_URL } = process.env;
 
-const { TOKEN, SERVER_URL } = process.env
-const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`
-const URI = `/webhook/${TOKEN}`
-const WEBHOOK_URL = SERVER_URL + URI
+const groq = new Groq({
+    apiKey: GROQ_API_KEY
+});
 
-const app = express()
-app.use(bodyParser.json())
-
-const init = async () => {
-    const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`)
-    console.log(res.data)
+async function getGroqChatCompletion(prompt) {
+    const result = await groq.chat.completions.create({
+        messages: [
+            {
+                role: "user",
+                content: prompt
+            }
+        ],
+        model: "llama3-8b-8192"
+    });
+    return result.choices[0].message.content;
 }
 
+const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
+const URI = `/webhook/${TOKEN}`;
+const WEBHOOK_URL = SERVER_URL + URI;
+
+const app = express();
+app.use(bodyParser.json());
+
+// Seteo url Webhook en Telegram
+const init = async () => {
+  const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`);
+  console.log(res.data);
+};
+
+// Webhook Telegram
 app.post(URI, async (req, res) => {
-    console.log(req.body)
+  const chatId = req.body.message.chat.id;
+  const text = req.body.message.text;
+  console.log(chatId, text);
+  const response = await getGroqChatCompletion(text);
+  await axios.post(`${TELEGRAM_API}/sendMessage`, {
+    chat_id: chatId,
+    text: response,
+  });
+  return res.send();
+});
 
-    const chatId = req.body.message.chat.id
-    const text = req.body.message.text
-
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: chatId,
-        text: text
-    })
-    return res.send()
-})
-
-app.post('/api/rx', async (req, res) => {
-    const { body } = req;
-    console.log(body);
-    return res.send('API rx Ok...');
-})
+// API RX
+app.post("/api/rx", async (req, res) => {
+  return res.send("API rx Ok...");
+});
 
 app.listen(process.env.PORT || 4040, async () => {
-    console.log('🚀 app running on port', process.env.PORT || 4040)
-    await init()
-})
+  console.log("🚀 app running on port", process.env.PORT || 4040);
+  await init();
+});
