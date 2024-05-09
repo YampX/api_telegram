@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const { TOKEN, SERVER_URL } = process.env;
+const { ID_TELEGRAM, TOKEN, SERVER_URL } = process.env;
 
 const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 const URI = `/webhook/${TOKEN}`;
@@ -18,19 +18,22 @@ const init = async () => {
 
 // Webhook Telegram
 app.post(URI, async (req, res) => {
-  const data = req.body;
-  console.log(data);
-  const chatId = req.body.message.chat.id;
-  const text = req.body.message.text;
-  await axios.post(`${TELEGRAM_API}/sendMessage`, {
-    chat_id: chatId,
-    text: text,
-  });
+//   const chatId = req.body.message.chat.id;
+//   const text = req.body.message.text;
+//   await axios.post(`${TELEGRAM_API}/sendMessage`, {
+//     chat_id: chatId,
+//     text: text,
+//   });
   return res.send();
 });
 
 // API RX
 app.post("/api/rx", async (req, res) => {
+    const text = 'prueba 1';
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: ID_TELEGRAM,
+        text: text,
+      });
   return res.send("API rx Ok...");
 });
 
