@@ -28,6 +28,12 @@ app.post(URI, async (req, res) => {
     return res.send()
 })
 
+app.post('/api/rx', async (req, res) => {
+    const { body } = req;
+    console.log(body);
+    return res.send('API rx Ok...');
+})
+
 app.listen(process.env.PORT || 4040, async () => {
     console.log('🚀 app running on port', process.env.PORT || 4040)
     await init()
