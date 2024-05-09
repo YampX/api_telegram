@@ -36,14 +36,15 @@ const init = async () => {
 
 // Webhook Telegram
 app.post(URI, async (req, res) => {
+    const data = req.body;
 //   const chatId = req.body.message.chat.id;
-   const text = req.body.message.text;
+//   const text = req.body.message.text;
 //   const response = await getGroqChatCompletion(text);
 //   await axios.post(`${TELEGRAM_API}/sendMessage`, {
 //     chat_id: chatId,
 //     text: text,
 //   });
-  console.log(text);
+  console.log(data);
   return res.send();
 });
 
