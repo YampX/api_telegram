@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const { ID_TELEGRAM, TOKEN, SERVER_URL } = process.env;
+const { TOKEN_AUTH, ID_TELEGRAM, TOKEN, SERVER_URL } = process.env;
 
 const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 const URI = `/webhook/${TOKEN}`;
@@ -18,23 +18,27 @@ const init = async () => {
 
 // Webhook Telegram
 app.post(URI, async (req, res) => {
-//   const chatId = req.body.message.chat.id;
-//   const text = req.body.message.text;
-//   await axios.post(`${TELEGRAM_API}/sendMessage`, {
-//     chat_id: chatId,
-//     text: text,
-//   });
+  //   const chatId = req.body.message.chat.id;
+  //   const text = req.body.message.text;
+  //   await axios.post(`${TELEGRAM_API}/sendMessage`, {
+  //     chat_id: chatId,
+  //     text: text,
+  //   });
   return res.send();
 });
 
 // API RX
 app.post("/api/rx", async (req, res) => {
-    const text = req.body.data || "...";
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_id: ID_TELEGRAM,
-        text: text,
-      });
-  return res.send("API rx Ok...");
+  const token = req.body.token;
+  if (token !== TOKEN_AUTH) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const text = req.body.data || "...";
+  await axios.post(`${TELEGRAM_API}/sendMessage`, {
+    chat_id: ID_TELEGRAM,
+    text: text,
+  });
+  return res.send("Message sent...");
 });
 
 app.listen(process.env.PORT || 4040, async () => {
