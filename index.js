@@ -29,7 +29,7 @@ app.post(URI, async (req, res) => {
 
 // API RX
 app.post("/api/rx", async (req, res) => {
-    const text = 'prueba 1';
+    const text = req.body.data || "...";
     await axios.post(`${TELEGRAM_API}/sendMessage`, {
         chat_id: ID_TELEGRAM,
         text: text,
