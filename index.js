@@ -1,12 +1,12 @@
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const Groq = require("groq-sdk");
+//const Groq = require("groq-sdk");
 const { GROQ_API_KEY, TOKEN, SERVER_URL } = process.env;
 
-const groq = new Groq({
-    apiKey: GROQ_API_KEY
-});
+// const groq = new Groq({
+//     apiKey: GROQ_API_KEY
+// });
 
 async function getGroqChatCompletion(prompt) {
     const result = await groq.chat.completions.create({
@@ -36,14 +36,14 @@ const init = async () => {
 
 // Webhook Telegram
 app.post(URI, async (req, res) => {
-  const chatId = req.body.message.chat.id;
-  const text = req.body.message.text;
-  console.log(chatId, text);
-  const response = await getGroqChatCompletion(text);
-  await axios.post(`${TELEGRAM_API}/sendMessage`, {
-    chat_id: chatId,
-    text: response,
-  });
+//   const chatId = req.body.message.chat.id;
+   const text = req.body.message.text;
+//   const response = await getGroqChatCompletion(text);
+//   await axios.post(`${TELEGRAM_API}/sendMessage`, {
+//     chat_id: chatId,
+//     text: text,
+//   });
+  console.log(text);
   return res.send();
 });
 
