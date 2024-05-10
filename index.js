@@ -29,11 +29,11 @@ app.post(URI, async (req, res) => {
 
 // API RX
 app.post("/api/rx", async (req, res) => {
-  const token = req.body.token;
+  const token = req.data.token;
   if (token !== TOKEN_AUTH) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  const text = req.body.text || "...";
+  const text = req.data.text || "...";
   await axios.post(`${TELEGRAM_API}/sendMessage`, {
     chat_id: ID_TELEGRAM,
     text: text,
