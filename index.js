@@ -29,6 +29,7 @@ app.post(URI, async (req, res) => {
 
 // API RX
 app.post("/api/rx", async (req, res) => {
+    console.log(req.body);
   const token = req.body.token;
   if (token !== TOKEN_AUTH) {
     return res.status(401).json({ error: "Unauthorized" });
